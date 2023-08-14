@@ -13,7 +13,7 @@ all_chords = get_allchords()
 
 if JINGLE:
     for chord in all_chords:
-        play_arpeggio(chord, 240)
+        play_arpeggio(chord, 130)
 
         pygame.mixer.stop()
 
@@ -54,6 +54,9 @@ def choose_start(inp):
 
     global main_run, start_run, option_run, note_input, chord_input
 
+    # prompt:
+    # "1. Play chord - 2. Option - \'Q\' to quit \n"
+
     if inp == '1':
         note_input = True
         chord_input = True
@@ -69,16 +72,23 @@ def choose_start(inp):
     else:
         print('Invalid choice')
 
-def choose_option():
+def choose_option(inp):
 
     global main_run, option_run
 
+    # prompt
+    # "1. Set BPM - 2. Set volume - 'Q' to quit \n"
+
     if inp == '1':
 
-        if inp.isdigit() and 1 <= int(inp) <= 250:
-            settings.BPM = int(inp)
+        while True:
+            inp = input('BPM (40-250): ')
 
-        option_run = False
+            if inp.isdigit() and 1 <= int(inp) <= 250:
+                settings.BPM = int(inp)
+                option_run = False
+
+            break
 
     elif inp == '2':
 
@@ -88,7 +98,7 @@ def choose_option():
             option_run = False
 
     elif inp.lower() == 'q':
-        quit()
+        option_run = False
 
     else:
         print('Invalid option')
@@ -148,11 +158,11 @@ while main_run:
     playing_sound = False
 
     while start_run:
-        inp = input('1. Play chord  -  2. Option  -  \'Q\' to quit \n')
+        inp = input("1. Play chord - 2. Option - 'Q' to quit \n")
         choose_start(inp)
 
         while option_run:
-            inp = input('1. Set BPM  -  2. Set volume  -  \'Q\' to quit \n')
+            inp = input("1. Set BPM - 2. Set volume - 'Q' to quit \n")
             choose_option()
 
         while note_input:

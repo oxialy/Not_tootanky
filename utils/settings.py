@@ -35,6 +35,9 @@ Notes_path = [name + '_note.wav' for name in Notes_name]
 
 Sound_list = [pygame.mixer.Sound(global_path + path) for path in Notes_path]
 
+PLAYSOUND = pygame.USEREVENT
+
+
 
 def compile_notes_list():
     notes_dict = {}
@@ -95,18 +98,30 @@ def get_chord(base_note, chord_name):
 
     return chord
 
+
+
+
 def play_chord(chord):
     for note in chord:
-        Notes_spec[note]['sound'].play()
+
+        play_note(note)
+
         print(Notes_spec[note])
 
 def play_arpeggio(chord, bpm=60):
     for note in chord:
-        Notes_spec[note]['sound'].play()
+
+        play_note(note)
+
         pygame.time.delay(round(1000*60/bpm))
 
 def play_note(note):
     Notes_spec[note]['sound'].play()
+
+    # {'C#3' : {'value': 3, 'sound': file} }
+
+
+
 
 def get_random_notes(n):
     note_list = []
