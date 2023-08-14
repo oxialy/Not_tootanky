@@ -10,31 +10,18 @@ from random import randrange, choice
 pygame.init()
 
 
-WIDTH, HEIGHT = 600,600
-
-
-pos = 0, 0
-pos_x, pos_y = pos
-
-
 colors = ['#AAAAAA', '#103010']
 bg_color = '#08202A'
 border_color = 'black'
 
-DIRECTION = {
-    -1: pygame.Vector2(0,-1),
-    1: pygame.Vector2(0,1),
-    -2: pygame.Vector2(-1,0),
-    2: pygame.Vector2(1,0)
-}
 
-left_border = pygame.Rect(0,0, 45,HEIGHT)
-right_border = pygame.Rect(WIDTH-45,0, 45,HEIGHT)
+#left_border = pygame.Rect(0,0, 45,HEIGHT)
+#right_border = pygame.Rect(WIDTH-45,0, 45,HEIGHT)
+
 
 global_path = 'C:\\Users\\jingl\\Documents\\GitHub\\Not_tootanky\\notes\\'
 
-Db_2 = pygame.mixer.Sound(global_path+'c#2_note.wav')
-
+scale = ['c','d','e','f','g','a','b']
 
 Notes_name = ['c2', 'c#2', 'd2', 'd#2', 'e2', 'f2', 'f#2', 'g2', 'g#2', 'a2', 'a#2', 'b2',
               'c3', 'c#3', 'd3', 'd#3', 'e3', 'f3', 'f#3', 'g3', 'g#3', 'a3', 'a#3', 'b3',
@@ -53,9 +40,6 @@ def compile_notes_list():
 
     return notes_dict
 
-Notes_spec = compile_notes_list()
-
-
 def map_note_value():
     mapping = {}
 
@@ -64,14 +48,28 @@ def map_note_value():
 
     return mapping
 
+def map_scale():
+    mapping = {}
+
+    for i, scale_note in enumerate(scale):
+        #       dict format:
+        # {'c': ['c#2', 'c#3', 'c#4']}
+        mapping[scale_note] = [Notes_name[i], Notes_name[i + 12], Notes_name[i + 24]]
+
+    return mapping
+
+
+Notes_spec = compile_notes_list()
+
 value_mapping = map_note_value()
+
+scale_mapping = map_scale()
 
 
 chords = {
     '5M': [4, 7],
     '5m': [3, 7],
     '5dim': [3,6],
-    '6': [],
     '7+': [4, 7, 10],
     '7M': [4,7, 11],
     '7m': [3,7, 10],
@@ -99,6 +97,11 @@ def play_chord(chord):
         Notes_spec[note]['sound'].play()
         print(Notes_spec[note])
 
+def play_arpeggio(chord, bpm=60):
+    for note in chord:
+        Notes_spec[note]['sound'].play()
+        pygame.time.delay(round(1000*60/bpm))
+
 def play_note(note):
     Notes_spec[note]['sound'].play()
 
@@ -111,9 +114,17 @@ def get_random_notes(n):
 
     return note_list
 
+def get_allchords():
+    all_chords = []
 
-welcome1 = get_chord('c3', 'M0')
-welcome2 = get_chord('a3', 'M0')
+    for note in Notes_name[:len(Notes_name)-13]:
+        all_chords.append(get_chord(note, '7+'))
+
+    return all_chords
+
+
+welcome1 = get_chord('c3', '5m')
+welcome2 = get_chord('a3', '5M')
 
 print(Notes_spec)
 

@@ -7,17 +7,16 @@ import json
 
 pygame.init()
 
-JINGLE = True
+JINGLE = False
+
+all_chords = get_allchords()
 
 if JINGLE:
-    n = random.randrange(2,5)
-    for j in range(n):
-        randnotes = get_random_notes(3)
+    for chord in all_chords:
+        play_arpeggio(chord, 240)
 
-        print(randnotes)
-        for note in randnotes:
-            play_note(note)
-        pygame.time.wait(700)
+        pygame.mixer.stop()
+
 
 
 #WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -62,6 +61,9 @@ while running:
     if inp in Notes_name:
         note = inp
         running = False
+    if inp in scale_mapping:
+        note = scale_mapping[inp][1]
+        running = False
     elif inp == 'q':
         quit()
     else:
@@ -85,6 +87,6 @@ while running:
 
 print(final_chord)
 
-for note in final_chord:
-    Notes_spec[note]['sound'].play()
-    pygame.time.wait(1000)
+play_arpeggio(final_chord)
+
+pygame.time.wait(1000)
