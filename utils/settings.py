@@ -6,6 +6,8 @@ from itertools import cycle
 
 from random import randrange, choice
 
+from .formatting import pretty_print_note
+
 
 pygame.init()
 
@@ -22,7 +24,7 @@ BPM = 120
 VOLUME = 0.3
 
 
-global_path = 'C:\\Users\\jingl\\Documents\\GitHub\\Not_tootanky\\notes\\'
+global_path = './notes/'
 
 scale = ['c','d','e','f','g','a','b']
 
@@ -148,6 +150,6 @@ def change_volume(val):
 welcome1 = get_chord('c3', '5m')
 welcome2 = get_chord('a3', '5M')
 
-print(Notes_spec)
+pretty_print_note(Notes_spec)
 
 change_volume(VOLUME)
