@@ -50,43 +50,118 @@ def write_text(win, data, x,y, size =25):
     win.blit(text_surf, (x,y))
 
 
-running = True
-stop = False
-clock = pygame.time.Clock()
-FPS = 30
+def choose_start(inp):
 
-while running:
-    inp = input('note: ')
+    global main_run, start_run, option_run, note_input, chord_input
+
+    if inp == '1':
+        note_input = True
+        chord_input = True
+        start_run = False
+
+    elif inp == '2':
+        option_run = True
+        start_run = False
+
+    elif inp.lower() == 'q':
+        quit()
+
+    else:
+        print('Invalid choice')
+
+def choose_option():
+
+    global main_run, option_run
+
+    if inp == '1':
+
+        if inp.isdigit() and 1 <= int(inp) <= 250:
+            settings.BPM = int(inp)
+
+        option_run = False
+
+    elif inp == '2':
+
+        if inp.isdigit() and 0 <= int(inp) <= 100:
+            settings.VOLUME = int(inp)
+
+            option_run = False
+
+    elif inp.lower() == 'q':
+        quit()
+
+    else:
+        print('Invalid option')
+
+def choose_note(inp):
+    global main_run, note_input
 
     if inp in Notes_name:
         note = inp
-        running = False
+
+        note_input = False
+        return note
+
     if inp in scale_mapping:
         note = scale_mapping[inp][1]
-        running = False
-    elif inp == 'q':
+
+        note_input = False
+        return note
+
+    elif inp.lower() == 'q':
         quit()
+
     else:
         print('Invalid note: ')
 
-if not stop:
-    running = True
 
-while running:
-    inp = input('Choose a chord: ')
+def choose_chord(note, inp):
+    global main_run, chord_input, playing_sound
 
     if inp in chords:
-        final_chord = get_chord(note, inp)
-        running = False
+        chord = get_chord(note, inp)
+
+        playing_sound = True
+        chord_input = False
+        return chord
+
+    elif inp.lower() == 'q':
+        quit()
+
     else:
         print('Invalid chord')
 
-while running:
-    pass
 
+clock = pygame.time.Clock()
+FPS = 30
 
-print(final_chord)
+main_run = True
 
-play_arpeggio(final_chord)
+option_run = False
+note_input = False
+chord_input = False
 
-pygame.time.wait(1000)
+while main_run:
+
+    start_run = True
+
+    playing_sound = False
+
+    while start_run:
+        inp = input('1. Play chord  -  2. Option  -  \'Q\' to quit \n')
+        choose_start(inp)
+
+        while option_run:
+            inp = input('1. Set BPM  -  2. Set volume  -  \'Q\' to quit \n')
+            choose_option()
+
+        while note_input:
+            inp = input('note: ')
+            chosen_note = choose_note(inp)
+
+            while chord_input:
+                inp = input('chord: ')
+                final_chord = choose_chord(chosen_note, inp)
+
+    if playing_sound:
+        play_arpeggio(final_chord, settings.BPM)

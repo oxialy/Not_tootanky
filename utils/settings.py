@@ -18,6 +18,9 @@ border_color = 'black'
 #left_border = pygame.Rect(0,0, 45,HEIGHT)
 #right_border = pygame.Rect(WIDTH-45,0, 45,HEIGHT)
 
+BPM = 120
+VOLUME = 0.3
+
 
 global_path = 'C:\\Users\\jingl\\Documents\\GitHub\\Not_tootanky\\notes\\'
 
@@ -122,11 +125,14 @@ def get_allchords():
 
     return all_chords
 
+def change_volume(val):
+    for spec in Notes_spec.values():
+        spec['sound'].set_volume(val)
+
 
 welcome1 = get_chord('c3', '5m')
 welcome2 = get_chord('a3', '5M')
 
 print(Notes_spec)
 
-for spec in Notes_spec.values():
-    spec['sound'].set_volume(0.3)
+change_volume(VOLUME)
