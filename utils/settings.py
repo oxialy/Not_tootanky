@@ -8,6 +8,8 @@ from itertools import cycle
 
 from random import randrange, choice
 
+from .formatting import pretty_print_note
+
 
 pygame.init()
 
@@ -239,6 +241,6 @@ welcome2 = get_chord('A3', '5M')
 
 all_chords = get_allchords()
 
-print(Notes_spec)
+pretty_print_note(Notes_spec)
 
 change_volume(VOLUME)
