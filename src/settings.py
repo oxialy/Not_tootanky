@@ -28,7 +28,7 @@ BPM = 120
 VOLUME = 0.3
 
 
-global_path = './notes/'
+global_path = './data/notes/'
 
 scale_natural = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
 
@@ -51,8 +51,6 @@ Sharp_enharmonics = ['E#2', 'B#2', 'E#3', 'B#3', 'E#4', 'B#4']
 
 
 Sound_path = [name.lower() + '_note.wav' for name in Notes_name]
-
-
 Sound_list = [pygame.mixer.Sound(global_path + path) for path in Sound_path]
 
 
