@@ -55,7 +55,8 @@ Sound_path = [name.lower() + '_note.wav' for name in Notes_name]
 
 Sound_list = [pygame.mixer.Sound(global_path + path) for path in Sound_path]
 
-PLAYSOUND = pygame.USEREVENT
+
+PLAYSOUND = pygame.USEREVENT    # sound playing event
 
 
 # NotImplemented, Chord class
@@ -150,6 +151,9 @@ def get_chord(base_note, chord_name):
 
     return chord
 
+
+# enharmonics check and adjusting functions
+
 def augment_flat_enharmonic(note):
 
     if len(note) == 3:
@@ -188,6 +192,8 @@ def get_enharmonic(note):
         return enharmonic
 
 
+# sound play:
+
 def play_chord(chord):
     for note in chord:
 
@@ -214,6 +220,14 @@ def play_note(note):
 
 
 
+def change_volume(val):
+    for spec in Notes_spec.values():
+        spec['sound'].set_volume(val)
+
+
+
+# other functions
+
 def get_random_notes(n):
     note_list = []
     for i in range(n):
@@ -231,9 +245,7 @@ def get_allchords():
 
     return all_chords
 
-def change_volume(val):
-    for spec in Notes_spec.values():
-        spec['sound'].set_volume(val)
+
 
 
 welcome1 = get_chord('C3', '5m')

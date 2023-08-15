@@ -194,5 +194,11 @@ while main_run:
                 final_chord = choose_chord(chosen_note, inp)
 
     if playing_sound:
+        print('~~~~')
         print('playing: ', end=' ')
+
         play_arpeggio(final_chord, settings.BPM)
+
+        print('~~~~')
+
+        pygame.time.wait(700)
