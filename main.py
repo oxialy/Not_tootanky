@@ -9,15 +9,6 @@ pygame.init()
 
 JINGLE = False
 
-all_chords = get_allchords()
-
-if JINGLE:
-    for chord in all_chords:
-        play_arpeggio(chord, 130)
-
-        pygame.mixer.stop()
-
-
 
 #WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 
@@ -32,6 +23,9 @@ def load_json(filepath):
 
     return data
 
+
+# future function for displaying items on screen
+
 def draw_screen(win):
     win.fill(bg_color)
 
@@ -43,7 +37,6 @@ def draw_screen(win):
     pygame.draw.rect(win, 'purple', (WIDTH / 2, HEIGHT / 2 - 4, 1, 8))
 
 
-
 def write_text(win, data, x,y, size =25):
     Font = pygame.font.SysFont('arial', size)
     text_surf = Font.render(str(data), 1, '#A09040')
@@ -51,20 +44,27 @@ def write_text(win, data, x,y, size =25):
 
 
 def choose_start(inp):
+    def next_input():
+        global start_run, note_input
 
-    global main_run, start_run, option_run, note_input, chord_input
+        note_input = True
+        start_run = False
+
+    def next_option():
+        global start_run, option_run
+
+        option_run = True
+        start_run = False
+
 
     # prompt:
     # "1. Play chord - 2. Option - \'Q\' to quit \n"
 
     if inp == '1':
-        note_input = True
-        chord_input = True
-        start_run = False
+        next_input()
 
     elif inp == '2':
-        option_run = True
-        start_run = False
+        next_option()
 
     elif inp.lower() == 'q':
         quit()
@@ -104,39 +104,59 @@ def choose_option(inp):
         print('Invalid option')
 
 def choose_note(inp):
-    global main_run, note_input
+    def next_():
+        global note_input, chord_input
+
+        chord_input = True
+        note_input = False
+
+
+    inp = inp.upper()
 
     if inp in Notes_name:
         note = inp
 
-        note_input = False
+        next_()
         return note
 
-    if inp in scale_mapping:
-        note = scale_mapping[inp][1]
+    elif inp in Flat_enharmonics + Sharp_enharmonics:
+        note = get_enharmonic(inp)
 
-        note_input = False
+        next_()
         return note
 
-    elif inp.lower() == 'q':
-        quit()
+    elif inp in scale:    # ex: turn 'C#' into 'C#3'
+        note = inp + '3'
+
+        if note in Flat_enharmonics + Sharp_enharmonics:
+            note = get_enharmonic(note)
+
+        next_()
+        return note
+
+    elif inp == 'q':
+        note_input = False
 
     else:
-        print('Invalid note: ')
+        print('Invalid note. (try: C#2 or Bb3) ')
 
 
 def choose_chord(note, inp):
-    global main_run, chord_input, playing_sound
+    def next_():
+        global chord_input, playing_sound
+
+        playing_sound = True
+        chord_input = False
+
 
     if inp in chords:
         chord = get_chord(note, inp)
 
-        playing_sound = True
-        chord_input = False
+        next_()
         return chord
 
     elif inp.lower() == 'q':
-        quit()
+        chord_input = False
 
     else:
         print('Invalid chord')
@@ -174,4 +194,5 @@ while main_run:
                 final_chord = choose_chord(chosen_note, inp)
 
     if playing_sound:
+        print('playing: ', end=' ')
         play_arpeggio(final_chord, settings.BPM)

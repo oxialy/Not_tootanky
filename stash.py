@@ -3,6 +3,20 @@
 #
 #
 
+def next_input():
+    global start_run, note_input
+
+    note_input = True
+    start_run = False
+
+
+def next_option():
+    global start_run, option_run
+    option_run = True
+    start_run = False
+
+
+
 
 while running:
 
