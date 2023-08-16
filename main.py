@@ -1,4 +1,5 @@
-from utils import *
+from src import settings
+from src.settings import * 
 
 import pygame.mouse
 import random
