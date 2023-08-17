@@ -14,18 +14,62 @@ from .formatting import pretty_print_note
 pygame.init()
 
 
-colors = ['#AAAAAA', '#103010']
+colors = ['#020202', '#AAAAAA', '#103010']
 bg_color = '#08202A'
 border_color = 'black'
 
+toolbar_col = ['#808080', '#607598']
 
-#WIDTH, HEIGHT = 600,600
+
+WIDTH, HEIGHT = 700,700
+center = WIDTH//2, HEIGHT//2
 
 #left_border = pygame.Rect(0,0, 45,HEIGHT)
 #right_border = pygame.Rect(WIDTH-45,0, 45,HEIGHT)
 
+
+pos = pos_x, pos_y = 0,0
+
+clock = pygame.time.Clock()
+FPS = 20
+
+Note_num = 12*2   # C3 to B3, and C4 to B4
+
+# toolbar 1
+toolSize_1 = 432, 100   # for perfect alignment, x should be a multiple of Note_num
+toolbar_1 = pygame.Surface(toolSize_1)
+
+toolPos_1 = center[0] - toolSize_1[0]/2, HEIGHT-200
+
+toolRect_1 = toolbar_1.get_rect(topleft=toolPos_1)
+
+
+# slider drawn on toolbar 1
+
+slider_size = 8,20
+slider_gridsize = GS = toolSize_1[0] // Note_num
+print(slider_gridsize)
+
+# initial pos, check if grid dimension is even:
+if Note_num % 2 == 0:
+    slider_pos = toolSize_1[0]/2 + GS/2, toolSize_1[1]/2
+else:
+    slider_pos = toolSize_1[0]/2, toolSize_1[1]/2
+
+
+slider_rect = pygame.Rect(slider_pos, slider_size)
+
+
+toggle_axis = True
+toggle_info = True
+
+
+chosen_note = 'C3'
+
+
 BPM = 120
 VOLUME = 0.3
+
 
 
 global_path = './data/notes/'
@@ -245,12 +289,11 @@ def get_allchords():
 
 
 
-
 welcome1 = get_chord('C3', '5m')
 welcome2 = get_chord('A3', '5M')
 
 all_chords = get_allchords()
 
-pretty_print_note(Notes_spec)
+print(Notes_spec)
 
 change_volume(VOLUME)
