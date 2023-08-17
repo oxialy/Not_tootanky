@@ -10,6 +10,9 @@ pygame.init()
 
 JINGLE = False
 
+if JINGLE:
+    play_jingle()
+
 
 #WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 
@@ -25,7 +28,8 @@ def load_json(filepath):
     return data
 
 
-# future function for displaying items on screen
+# future functions for displaying items on screen
+# using Pygame
 
 def draw_screen(win):
     win.fill(bg_color)
@@ -37,12 +41,17 @@ def draw_screen(win):
     pygame.draw.rect(win, 'purple', (WIDTH/2-4, HEIGHT/2, 8,1))
     pygame.draw.rect(win, 'purple', (WIDTH / 2, HEIGHT / 2 - 4, 1, 8))
 
-
 def write_text(win, data, x,y, size =25):
     Font = pygame.font.SysFont('arial', size)
     text_surf = Font.render(str(data), 1, '#A09040')
     win.blit(text_surf, (x,y))
 
+
+# Check user input:
+# - choose_start
+# - choose_option
+# - choose_note
+# - choose_chord
 
 def choose_start(inp):
     def next_input():
@@ -105,6 +114,7 @@ def choose_option(inp):
         print('Invalid option')
 
 def choose_note(inp):
+    global note_input
     def next_():
         global note_input, chord_input
 
@@ -128,14 +138,18 @@ def choose_note(inp):
 
     elif inp in scale:    # ex: turn 'C#' into 'C#3'
         note = inp + '3'
+        print(note)
 
         if note in Flat_enharmonics + Sharp_enharmonics:
+            print(31)
             note = get_enharmonic(note)
+        else:
+            print(32)
 
         next_()
         return note
 
-    elif inp == 'q':
+    elif inp == 'Q':
         note_input = False
 
     else:
@@ -143,6 +157,8 @@ def choose_note(inp):
 
 
 def choose_chord(note, inp):
+    global chord_input
+
     def next_():
         global chord_input, playing_sound
 
@@ -151,7 +167,10 @@ def choose_chord(note, inp):
 
 
     if inp in chords:
-        chord = get_chord(note, inp)
+        chord = get_chord(note, inp)  # old chord func
+
+        chord = Chord()     # trying new class Chord
+        chord.create_chord(note, inp)
 
         next_()
         return chord
@@ -164,7 +183,6 @@ def choose_chord(note, inp):
 
 
 clock = pygame.time.Clock()
-FPS = 30
 
 main_run = True
 
@@ -183,23 +201,49 @@ while main_run:
         choose_start(inp)
 
         while option_run:
+            # NotImplemented
+
             inp = input("1. Set BPM - 2. Set volume - 'Q' to quit \n")
             choose_option()
 
         while note_input:
-            inp = input('note: ')
+            inp = input('note: ' + '\n')
             chosen_note = choose_note(inp)
 
             while chord_input:
-                inp = input('chord: ')
-                final_chord = choose_chord(chosen_note, inp)
+                inp = input('chord:  (5M, dim, 7+, 7m, 75dim, ...)' + '\n')
+                chord = choose_chord(chosen_note, inp)
 
     if playing_sound:
+        timer = round(1000*60/BPM)
+
+        # trigger PLAYSOUND event every -timer- ms:
+        pygame.time.set_timer(PLAYSOUND, timer)
+
         print('~~~~')
         print('playing: ', end=' ')
 
-        play_arpeggio(final_chord, settings.BPM)
+    while playing_sound:
 
-        print('~~~~')
+        clock.tick(FPS)  # rewrite FPS as settings.FPR ?
 
-        pygame.time.wait(700)
+        i = chord.index
+
+        for event in pygame.event.get():
+
+            if event.type == PLAYSOUND:
+                played_note = chord.chord[i]
+                play_note(chord.chord[i])
+
+                chord.index += 1
+
+        if chord.index > len(chord.chord) - 1:   # if chord list exhausted
+            pygame.time.set_timer(PLAYSOUND, 0)  # disable PLAYSOUND event
+            playing_sound = False
+
+        # random debug print:
+        t100 = pygame.time.get_ticks()
+        if t100 % 100 < 3:
+            print('debug 4: executing "playing_sound" loop', t100)
+
+    pygame.time.wait(700)

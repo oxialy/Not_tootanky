@@ -24,16 +24,19 @@ border_color = 'black'
 #left_border = pygame.Rect(0,0, 45,HEIGHT)
 #right_border = pygame.Rect(WIDTH-45,0, 45,HEIGHT)
 
+
 BPM = 120
 VOLUME = 0.3
 
 
-global_path = './data/notes/'
+global_path = './notes/'
 
+
+# scale lists, flats and sharps scales, enharmonics lists
 scale_natural = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
 
 scale_sharp_only = [note + '#' for note in scale_natural]
-scale_flat_only = [note + 'b' for note in scale_natural]
+scale_flat_only = [note + 'B' for note in scale_natural]
 scale = scale_natural + scale_sharp_only + scale_flat_only
 
 
@@ -43,45 +46,55 @@ Notes_name = ['B1',
               'C4', 'C#4', 'D4', 'D#4', 'E4', 'F4', 'F#4', 'G4', 'G#4', 'A4', 'A#4', 'B4',
               'C5']
 
-Flat_enharmonics = ['Cb2', 'Db2', 'Eb2', 'Fb2', 'Gb2', 'Ab2', 'Bb2',
-                    'Cb3', 'Db3', 'Eb3', 'Fb3', 'Gb3', 'Ab3', 'Bb3',
-                    'Cb4', 'Db4', 'Eb4', 'Fb4', 'Gb4', 'Ab4', 'Bb4']
+Flat_enharmonics = ['CB2', 'DB2', 'EB2', 'FB2', 'GB2', 'AB2', 'BB2',
+                    'CB3', 'DB3', 'EB3', 'FB3', 'GB3', 'AB3', 'BB3',
+                    'CB4', 'DB4', 'EB4', 'FB4', 'GB4', 'AB4', 'BB4']
 
 Sharp_enharmonics = ['E#2', 'B#2', 'E#3', 'B#3', 'E#4', 'B#4']
 
 
+
+# Sound file:
 Sound_path = [name.lower() + '_note.wav' for name in Notes_name]
+
 Sound_list = [pygame.mixer.Sound(global_path + path) for path in Sound_path]
 
 
-PLAYSOUND = pygame.USEREVENT    # sound playing event
+# sound playing event
+PLAYSOUND = pygame.USEREVENT
+
 
 
 # NotImplemented, Chord class
 class Chord:
     def __init__(self):
-        self.list = []
+        self.chord = []
         self.index = 0
 
     def create_chord(self, base_note, chord):
 
         val1 = Notes_spec[base_note]['value']
 
-        self.list = [base_note]
+        self.chord = [base_note]
 
-        for val2 in chord:
+        for val2 in chords[chord]:
             sum_val = val1 + val2
 
-        self.list.append(value_mapping[sum_val])
+            self.chord.append(value_mapping[sum_val])
 
 
+# ?
 def play_jingle():
+    print('playing: ')
+
     for chord in all_chords:
         play_arpeggio(chord, 120)
 
         pygame.mixer.stop()
 
-def compile_notes_list():
+
+
+def compile_notes_list():   # dictionary containing file and value for each note
     notes_dict = {}
     for i, (name, sound) in enumerate(zip(Notes_name, Sound_list)):
         notes_dict[name] = {'value': i+1, 'sound': sound}
@@ -114,6 +127,8 @@ def map_scale():    # obsolete
     return mapping
 
 
+# dictionary containing file and value for each note
+
 Notes_spec = compile_notes_list()
 
 value_mapping = map_note_value()
@@ -126,6 +141,7 @@ chords = {
     '5': [4, 7],
     '5M': [4, 7],
     '5m': [3, 7],
+    'dim': [3,6],
     '5dim': [3,6],
     '7+': [4, 7, 10],
     '7M': [4,7, 11],
