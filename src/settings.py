@@ -29,7 +29,7 @@ BPM = 120
 VOLUME = 0.3
 
 
-global_path = './notes/'
+global_path = './data/notes/'
 
 
 # scale lists, flats and sharps scales, enharmonics lists
