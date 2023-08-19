@@ -15,7 +15,7 @@ pygame.init()
 
 
 chosen_note = 'C3'
-
+chord = []
 
 BPM = 120
 VOLUME = 0.3
@@ -37,6 +37,8 @@ Notes_name = ['B1',
               'C4', 'C#4', 'D4', 'D#4', 'E4', 'F4', 'F#4', 'G4', 'G#4', 'A4', 'A#4', 'B4',
               'C5'
 ]
+
+chromatic_scale_c3 = ['C3', 'C#3', 'D3', 'D#3', 'E3', 'F3', 'F#3', 'G3', 'G#3', 'A3', 'A#3', 'B3']
 
 Flat_enharmonics = ['Cb2', 'Db2', 'Eb2', 'Fb2', 'Gb2', 'Ab2', 'Bb2',
                     'Cb3', 'Db3', 'Eb3', 'Fb3', 'Gb3', 'Ab3', 'Bb3',

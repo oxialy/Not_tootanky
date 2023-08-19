@@ -1,5 +1,4 @@
 from utils import *
-from utils import settings as sett
 
 import pygame
 
@@ -14,26 +13,27 @@ def draw_screen(win):
     win.fill(bg_color)
 
 
-    win.blit(toolbar_1, toolPos_1)
+    win.blit(toolbar1, toolbar1_pos)
     win.blit(toolbar2, toolbar2_pos)
+    win.blit(toolbar3, toolbar3_pos)
+    win.blit(toolbar4, toolbar4_pos)
 
-    toolbar_1.fill(toolbar_col[1])
+    toolbar1.fill(toolbar_col[1])
     toolbar2.fill(toolbar_col[2])
+    toolbar3.fill(toolbar_col[1])
+    toolbar4.fill(bg_color)
 
-    #pygame.draw.rect(win, border_color, left_border)
-    #pygame.draw.rect(win, border_color, right_border)
+    #pygame.draw.rect(win, 'grey', toolbar4_rect, 1)
 
-    # middle cross:
-    draw_crosshair(win)
+    staff.draw_lines(toolbar3)
+    staff.draw_all_notes(toolbar3)
 
-    # screen Y axis:
-    if toggle_axis:
-        pygame.draw.line(win,'#404040', (center[0], 0), (center[0], HEIGHT))
+    draw_chord_buttons(toolbar4)
 
     # slide bar and slider:
-    draw_slider_bar(toolbar_1)
-    draw_graduation(toolbar_1)
-    draw_slider(toolbar_1)
+    draw_slider_bar(toolbar1)
+    draw_graduation(toolbar1)
+    draw_slider(toolbar1)
 
     if toggle_chosen_note:
         if chosen_note:
@@ -43,6 +43,14 @@ def draw_screen(win):
                 write_text(win, 'Gb', 395, 420)
 
     draw_piano(toolbar2)
+
+
+    # middle cross:
+    draw_crosshair(win)
+
+    # screen Y axis:
+    if toggle_axis:
+        pygame.draw.line(win,'#404040', (center[0], 0), (center[0], HEIGHT))
 
 
 def write_screen_info(win):
@@ -67,18 +75,18 @@ def write_screen_info(win):
 
 def draw_slider_bar(win):
 
-    Cx = toolSize_1[0] / 2
+    Cx = toolbar1_size[0] / 2
 
-    start = (Cx - sliderbar_size/2, toolSize_1[1]/2)
-    end   = (Cx + sliderbar_size/2, toolSize_1[1]/2)
+    start = (Cx - sliderbar_size/2, toolbar1_size[1]/2)
+    end   = (Cx + sliderbar_size/2, toolbar1_size[1]/2)
 
-    pygame.draw.line(toolbar_1, colors[0], start, end)
+    pygame.draw.line(toolbar1, colors[0], start, end)
 
 def draw_graduation(win):
     S = slider_gridsize
 
-    Cx = toolSize_1[0]/2
-    Cy = toolSize_1[1]/2
+    Cx = toolbar1_size[0]/2
+    Cy = toolbar1_size[1]/2
 
     # offset from toolbar left side because slider bar is shorter
     offset2 = Cx - sliderbar_size/2
@@ -123,13 +131,18 @@ def draw_piano(win):
     if selected_key in black_keys:
         highlight_pressed_key(win)
 
+def draw_chord_buttons(win):
+    for button in chord_buttons:
+        button.draw(win)
+        button.write_button_text(win)
+
 
 
 
 def highlight_pressed_key(win):
     if selected_key:
         button = selected_key.button
-        pygame.draw.rect(win, '#A52020', button)
+        pygame.draw.rect(win, selection_col, button)
 
 def write_text(win, data, x,y, size=25):
     Font = pygame.font.SysFont('arial', size)
@@ -173,7 +186,7 @@ while main_run:
             pos = pygame.mouse.get_pos()
             pos_x, pos_y = pos
 
-            if toolPos_1[1] <= pos_y <= toolPos_1[1] + toolSize_1[1]:
+            if toolbar1_pos[1] <= pos_y <= toolbar1_pos[1] + toolbar1_size[1]:
 
                 # slider moves in x position:
                 slider_pos = move_slider(pos)
@@ -182,7 +195,25 @@ while main_run:
 
             if toolbar2_rect.collidepoint(pos):
                 selected_key = get_pressed_key(pos, black_keys + white_keys)
-                chosen_note = selected_key.note
+
+                if selected_key:
+                    chosen_note = selected_key.note
+                else:
+                    chosen_note = None
+
+                chord = [chosen_note]
+                staff.update_notes(chord)
+
+            elif toolbar4_rect.collidepoint(pos):
+                selected_chord = get_pressed_chord(pos, chord_buttons)
+
+                if selected_chord and chosen_note:
+                    chord = get_chord(chosen_note, selected_chord.chord)
+                else:
+                    chord = []
+
+                staff.update_notes(chord)
+
             else:
                 selected_key = None
                 chosen_note = None
