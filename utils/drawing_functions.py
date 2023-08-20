@@ -11,6 +11,7 @@ class Button:
         self.x, self.y, self.w, self.h = rect
 
         self.color = color
+        self.outline_col = '#405701'
         self.outline = outline
         self.font = pygame.font.SysFont('arial', 14)
         self.text_col = 'black'
@@ -19,7 +20,7 @@ class Button:
 
     def draw(self, win):
         pygame.draw.rect(win, self.color, self.button)
-        pygame.draw.rect(win, 'black', self.button, self.outline)
+        pygame.draw.rect(win, self.outline_col, self.button, self.outline)
 
 
 class Pianokey(Button):
@@ -34,7 +35,7 @@ class Chord_button(Button):
         super().__init__(rect)
         self.chord = chord
         self.color = color
-        self.outline = 2
+        self.outline = 3
 
     def set_chord(self):
         sett.chord = self.chord
@@ -107,11 +108,20 @@ class Staff:
         pygame.draw.ellipse(win, 'black', note_rect)
 
         if note in all_sharps:
-            text_pos = x-10, y-5
+            text_pos = x-11, y-3
             write_text(win, '#', text_pos, size=17, center=False)
 
         elif note in all_flats:
-            pass
+            text_pos = x - 11, y - 3
+            write_text(win, 'b', text_pos, size=15, center=False)
+
+        elif note in all_double_sharps:
+            text_pos = x- 10, y-2
+            write_text(win, 'x', text_pos, size=13, center=False)
+
+        elif note in all_double_flats:
+            text_pos = x - 14, y - 3
+            write_text(win, 'bb', text_pos, size=15, center=False)
 
         if self.POSITION_MAPPING[note] % 10 == 0:
             line_x = x + self.note_size/2
@@ -148,15 +158,15 @@ def create_piano_key():
     # black keys
     for i, note in zip([1,2,4,5,6], 'C#3 D#3 F#3 G#3 A#3'.split() ):
 
-        pianokey = Pianokey( (i*size - size2/2, 0, size2, 78), note, 'black')
+        pianokey = Pianokey( (i*size - size2/2, 0, size2, 78), note, '#101A1A')
         black_keys.append(pianokey)
 
     return white_keys, black_keys
 
 def create_chord_buttons():
-    size = 40
-    dist_x = size + 8
-    dist_y = size + 8
+    size = 43
+    dist_x = size + 6
+    dist_y = size + 6
 
     chord_buttons = []
 
@@ -252,7 +262,12 @@ def get_pressed_chord(pos, buttons):
 
 def write_text(win, data, pos, size=25, color='black', center=True):
     x,y = pos
-    Font = pygame.font.SysFont('arial', size)
+    all_fonts = pygame.font.get_fonts()
+    font1 = random.choice(all_fonts)
+    font2 = random.choice(all_fonts)
+    font3 = random.choice(all_fonts)
+
+    Font = pygame.font.SysFont('calibri', size)
     text_surf = Font.render(str(data), 1, color)
     size = text_surf.get_size()
 

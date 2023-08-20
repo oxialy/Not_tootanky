@@ -3,8 +3,8 @@
 import pygame
 
 
-colors = ['#020202', '#AAAAAA', '#909090']
-bg_color = '#08202A'
+colors = ['#020202', '#AAAAAA', '#808080']
+bg_color = '#112730'
 border_color = 'black'
 
 toolbar_col = ['#808080', '#607579', '#604001', '#604001']
@@ -44,7 +44,7 @@ toolbar2_rect = toolbar2.get_rect(topleft=toolbar2_pos)
 
 
 # toolbar4
-toolbar4_size = 230, 240
+toolbar4_size = 230, 260
 toolbar4 = pygame.Surface(toolbar4_size)
 toolbar4_pos = 90, center[1] - toolbar4_size[1]/2 - 20
 
@@ -80,3 +80,4 @@ slider_rect = pygame.Rect(slider_pos, slider_size)
 toggle_info = True
 toggle_axis = False
 toggle_chosen_note = False
+toggle_font = False

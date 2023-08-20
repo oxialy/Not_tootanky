@@ -142,6 +142,7 @@ INTERVAL_MAPPING = {
     '5aug': 8,
     '6m': 8,
     '6M': 9,
+    '7dim': 9,
     '7m': 10,
     '7M': 11,
     '9m': 13,
@@ -170,6 +171,27 @@ chords = {
     '1': []
 }
 
+chords = {
+    '5M': ['3M', '5J'],   # interval values in semitones
+    '5m': ['3m', '5J'],
+    '5dim': ['3m', '5dim'],
+
+    '6M': ['3m', '6m'],
+    '6m': ['3M', '6M'],
+    '64M': ['4J', '6M'],
+    '64m': ['4J', '6m'],
+
+    '7+': ['3M', '5J', '7m'],
+    '7M': ['3M', '5J', '7M'],
+    '7m': ['3m', '5J', '7m'],
+    '7dim': ['3m', '5dim', '7dim'],
+    '75dim': ['3m', '5dim', '7m'],
+    '9M': ['3M', '5J', '7m', '9M'],
+    '9m': ['3m', '5J', '7m', '9m'],
+
+    '1': []
+}
+
 
 def get_chord(base_note, chord_name):
 
@@ -181,15 +203,29 @@ def get_chord(base_note, chord_name):
 
     # construct natural chord
     natural_chord = [nat_base_note]
-    for i, val in enumerate(chordA):
+    for interval in chordA:
 
-        natural_chord.append(all_naturals[base_index + 2*(i+1)])
+        if interval in ['3m', '3M']:
+            j = 2
+        elif interval in ['4J']:
+            j = 3
+        elif interval in ['5dim', '5J', '5aug']:
+            j = 4
+        elif interval in ['6m', '6M']:
+            j = 5
+        elif interval in ['7dim', '7m', '7M']:
+            j = 6
+        elif interval in ['9m', '9m']:
+            j = 8
 
-    for i, interval2 in enumerate(chordA):
+        natural_chord.append(all_naturals[base_index + j])
+
+    for i, interval in enumerate(chordA):
         noteB = natural_chord[i+1]
 
-        interval1 = Notes_spec[noteB]['value'] - Notes_spec[base_note]['value']
-        diff = interval2 - interval1
+        interval_val1 = Notes_spec[noteB]['value'] - Notes_spec[base_note]['value']
+        interval_val2 = INTERVAL_MAPPING[interval]
+        diff = interval_val2 - interval_val1
 
         if diff == -2:
             noteB = noteB[0] + 'bb' + noteB[1]

@@ -52,14 +52,19 @@ def draw_screen(win):
     if toggle_axis:
         pygame.draw.line(win,'#404040', (center[0], 0), (center[0], HEIGHT))
 
+    # just a random font test; delete later
+    if toggle_font:
+        disp_font(win)
+
 
 def write_screen_info(win):
 
     info_list = [
         'toggle axis: L',
-        'toggle note selection : N'
+        'toggle note selection : N',
+        'toggle font test: F'
     ]
-    all_toggle = [toggle_axis, toggle_chosen_note]
+    all_toggle = [toggle_axis, toggle_chosen_note, toggle_font]
 
     # dev info:
     write_text(win, 'toggle dev. control: I', (WIDTH-180, 30), size=15)
@@ -151,8 +156,18 @@ def write_text(win, data, pos, size=25):
     text_surf = Font.render(str(data), 1, '#A09040')
     win.blit(text_surf, (x,y))
 
+def disp_font(win):
+    all_fonts = pygame.font.get_fonts()
+    for i in range(9):
+        j = i + pos_y // 8 + 0
 
+        j = min(len(all_fonts)-1, j)
 
+        font1 = all_fonts[j]
+
+        Font = pygame.font.SysFont(font1, 16)
+        text_surf = Font.render(str(font1) + ': ' + str(j), 1, '#A09040')
+        win.blit(text_surf, (30, 300 + i * 30))
 
 
 main_run = True
@@ -182,6 +197,8 @@ while main_run:
                 toggle_axis = not toggle_axis
             if event.key == pygame.K_n:
                 toggle_chosen_note = not toggle_chosen_note
+            if event.key == pygame.K_f:
+                toggle_font = not toggle_font
 
 
         if pygame.mouse.get_pressed()[0]:
