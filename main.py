@@ -37,10 +37,10 @@ def draw_screen(win):
 
     if toggle_chosen_note:
         if chosen_note:
-            write_text(win, chosen_note, 350,420)
+            write_text(win, chosen_note, (350,420))
 
-            if chosen_note[:2] in scale_sharp_only:
-                write_text(win, 'Gb', 395, 420)
+            if chosen_note[:2] in all_sharps:
+                write_text(win, 'Gb', (395, 420))
 
     draw_piano(toolbar2)
 
@@ -62,14 +62,14 @@ def write_screen_info(win):
     all_toggle = [toggle_axis, toggle_chosen_note]
 
     # dev info:
-    write_text(win, 'toggle dev. control: I', WIDTH-180, 30, size=15)
+    write_text(win, 'toggle dev. control: I', (WIDTH-180, 30), size=15)
 
     if toggle_info:
         for i, (info, toggle) in enumerate(zip(info_list, all_toggle)):
-            write_text(win, info, WIDTH-180, 80+i*30, size=15)
+            write_text(win, info, (WIDTH-180, 80+i*30), size=15)
 
 
-    write_text(win, pos, 30,30, size=18)
+    write_text(win, pos, (30,30), size=18)
 
 
 
@@ -134,7 +134,7 @@ def draw_piano(win):
 def draw_chord_buttons(win):
     for button in chord_buttons:
         button.draw(win)
-        button.write_button_text(win)
+        button.write(win)
 
 
 
@@ -144,7 +144,9 @@ def highlight_pressed_key(win):
         button = selected_key.button
         pygame.draw.rect(win, selection_col, button)
 
-def write_text(win, data, x,y, size=25):
+def write_text(win, data, pos, size=25):
+    x,y = pos
+
     Font = pygame.font.SysFont('arial', size)
     text_surf = Font.render(str(data), 1, '#A09040')
     win.blit(text_surf, (x,y))
@@ -193,6 +195,8 @@ while main_run:
 
                 chosen_note = value_mapping[slider_pos[0] // slider_gridsize + 0]
 
+                staff.update_notes(chord)
+
             if toolbar2_rect.collidepoint(pos):
                 selected_key = get_pressed_key(pos, black_keys + white_keys)
 
@@ -201,14 +205,16 @@ while main_run:
                 else:
                     chosen_note = None
 
-                chord = [chosen_note]
-                staff.update_notes(chord)
+                if chosen_note:
+                    chord = get_chord(chosen_note, selected_chord_button.chord)
+                    staff.update_notes(chord)
+
 
             elif toolbar4_rect.collidepoint(pos):
-                selected_chord = get_pressed_chord(pos, chord_buttons)
+                selected_chord_button = get_pressed_chord(pos, chord_buttons)
 
-                if selected_chord and chosen_note:
-                    chord = get_chord(chosen_note, selected_chord.chord)
+                if selected_chord_button and chosen_note:
+                    chord = get_chord(chosen_note, selected_chord_button.chord)
                 else:
                     chord = []
 
@@ -216,7 +222,8 @@ while main_run:
 
             else:
                 selected_key = None
-                chosen_note = None
+                chord = []
+                staff.update_notes(chord)
 
 
     clock.tick(FPS)

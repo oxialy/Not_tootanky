@@ -2,11 +2,6 @@
 
 import pygame
 import random
-import json
-
-from itertools import cycle
-
-from random import randrange, choice
 
 from .formatting import pretty_print_note
 
@@ -14,7 +9,7 @@ from .formatting import pretty_print_note
 pygame.init()
 
 
-chosen_note = 'C3'
+chosen_note = None
 chord = []
 
 BPM = 120
@@ -24,11 +19,12 @@ VOLUME = 0.3
 
 global_path = './data/notes/'
 
-scale_natural = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+all_naturals = 'B1 C2 D2 E2 F2 G2 A2 B2 C3 D3 E3 F3 G3 A3 B3 C4 D4 E4 F4 G4 A4 B4 C5'.split()
+all_sharps = [note[0] + '#' + note[1] for note in all_naturals]
+all_flats  = [note[0] + 'b' + note[1] for note in all_naturals]
+all_double_sharps = [note[0] + '##' + note[1] for note in all_naturals]
+all_double_flats  = [note[0] + 'bb' + note[1] for note in all_naturals]
 
-scale_sharp_only = [note + '#' for note in scale_natural]
-scale_flat_only = [note + 'b' for note in scale_natural]
-scale = scale_natural + scale_sharp_only + scale_flat_only
 
 
 Notes_name = ['B1',
@@ -40,11 +36,28 @@ Notes_name = ['B1',
 
 chromatic_scale_c3 = ['C3', 'C#3', 'D3', 'D#3', 'E3', 'F3', 'F#3', 'G3', 'G#3', 'A3', 'A#3', 'B3']
 
-Flat_enharmonics = ['Cb2', 'Db2', 'Eb2', 'Fb2', 'Gb2', 'Ab2', 'Bb2',
+
+flat_enharmonics = ['Cb2', 'Db2', 'Eb2', 'Fb2', 'Gb2', 'Ab2', 'Bb2',
                     'Cb3', 'Db3', 'Eb3', 'Fb3', 'Gb3', 'Ab3', 'Bb3',
                     'Cb4', 'Db4', 'Eb4', 'Fb4', 'Gb4', 'Ab4', 'Bb4']
 
-Sharp_enharmonics = ['E#2', 'B#2', 'E#3', 'B#3', 'E#4', 'B#4']
+flat_equivalent = ['B#2', 'C#2', 'D#2', 'E#2', 'F#2', 'G#2', 'A#2',
+                     'B#3', 'C#3', 'D#3', 'E#3', 'F#3', 'G#3', 'A#3',
+                     'B#4', 'C#4', 'D#4', 'E#4', 'F#4', 'G#4', 'A#4']
+
+sharp_enharmonics = ['E#2', 'B#2', 'E#3', 'B#3', 'E#4', 'B#4']
+
+sharp_equivalent = ['Fb2', 'Db2', 'Fb3', 'Db3', 'Fb4', 'Db4']
+
+double_flat_enharmonics = ['Bbb2', 'Bbb3', 'Bbb4']
+double_sharp_enharmonics = ['F##2', 'C##2', 'F##3', 'C##3', 'F##4', 'C##4']
+
+double_flat_equivalent = ['A2', 'A3', 'A4']
+double_sharp_equivalent = ['G2', 'D2', 'G3', 'D3', 'G4', 'D4']
+
+
+FLAT_MAPPING = {flat: sharp for flat, sharp in zip(flat_enharmonics, sharp_equivalent)}
+SHARP_MAPPING = {sharp: flat for sharp, flat in zip(sharp_enharmonics, flat_equivalent)}
 
 
 Sound_path = [name.lower() + '_note.wav' for name in Notes_name]
@@ -120,33 +133,84 @@ value_mapping = map_note_value('C2')
 #obsolete
 #scale_mapping = map_scale()
 
+INTERVAL_MAPPING = {
+    '3m': 3,
+    '3M': 4,
+    '4J': 5,
+    '5dim': 6,
+    '5J': 7,
+    '5aug': 8,
+    '6m': 8,
+    '6M': 9,
+    '7m': 10,
+    '7M': 11,
+    '9m': 13,
+    '9M': 14
+}
 
 chords = {
-    '5': [4, 7],
+    '5': [4, 7],   # interval values in semitones
     '5M': [4, 7],
     '5m': [3, 7],
     '5dim': [3,6],
-    '7+': [4, 7, 10],
+
+    '6M': [3, 8],
+    '6m': [4, 9],
+    '64M': [5, 9],
+    '64m': [5, 8],
+
+    '7+': [4,7, 10],
     '7M': [4,7, 11],
     '7m': [3,7, 10],
     '7dim': [3,6, 9],
     '75dim': [3,6, 10],
-    '9M': [4, 7, 10, 14]
+    '9M': [4,7, 10, 14],
+    '9m': [3,7, 10, 13],
+
+    '1': []
 }
 
 
 def get_chord(base_note, chord_name):
-    val1 = Notes_spec[base_note]['value']
 
-    chord = [base_note]
+    nat_base_note = base_note[0] + base_note[len(base_note)-1]
+    base_index = all_naturals.index(nat_base_note)
 
-    for val2 in chords[chord_name]:
+    chordA = chords[chord_name]
+    chordB = [base_note]
 
-        val_sum = val1 + val2
+    # construct natural chord
+    natural_chord = [nat_base_note]
+    for i, val in enumerate(chordA):
 
-        chord.append(value_mapping[val_sum])
+        natural_chord.append(all_naturals[base_index + 2*(i+1)])
 
-    return chord
+    for i, interval2 in enumerate(chordA):
+        noteB = natural_chord[i+1]
+
+        interval1 = Notes_spec[noteB]['value'] - Notes_spec[base_note]['value']
+        diff = interval2 - interval1
+
+        if diff == -2:
+            noteB = noteB[0] + 'bb' + noteB[1]
+            chordB.append(noteB)
+
+        elif diff == -1:
+            noteB = noteB[0] + 'b' + noteB[1]
+            chordB.append(noteB)
+
+        elif diff == 0:
+            chordB.append(noteB)
+
+        elif diff == 1:
+            noteB = noteB[0] + '#' + noteB[1]
+            chordB.append(noteB)
+
+        elif diff == 2:
+            noteB = noteB[0] + '##' + noteB[1]
+            chordB.append(noteB)
+
+    return chordB
 
 
 # enharmonics check and adjusting functions

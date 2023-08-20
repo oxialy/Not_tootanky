@@ -39,56 +39,46 @@ class Chord_button(Button):
     def set_chord(self):
         sett.chord = self.chord
 
-    def write_button_text(self, win):
-        #write_text(win, self.chord, self.x, self.y, size=16)
+    def write(self, win):
+        x = self.x + self.w/2
+        y = self.y + self.h/2
 
-        text_surf = self.font.render(self.chord, 1, self.text_col)
-        size = text_surf.get_size()
-        pos_x = self.x + self.w/2 - size[0]/2
-        pos_y = self.y + self.h/2 - size[1]/2
-        win.blit(text_surf, (pos_x, pos_y))
+        write_text(win, self.chord, (x,y), size=14)
 
 
 class Staff:
     linesize = 10
+
+    l = linesize/2
+
     staffsize = linesize * 4
 
     note_size = linesize - 1
 
-    offset = toolbar3_size[1]/2 - staffsize/2
+    offset = toolbar3_size[1]/2 - staffsize/2   # dist between TB border and staff 5th line
 
-    POSITION_LIST = [
-        -2 * linesize / 2,
-        -2 * linesize / 2,
-        -1 * linesize / 2,
-        -1 * linesize / 2,
-         0 * linesize / 2,
-         1 * linesize / 2,
-         1 * linesize / 2,
-         2 * linesize / 2,
-         2 * linesize / 2,
-         3 * linesize / 2,
-         3 * linesize / 2,
-         4 * linesize / 2,
-         5 * linesize / 2,
-         5 * linesize / 2,
-         6 * linesize / 2,
-         6 * linesize / 2,
-         7 * linesize / 2,
-         8 * linesize / 2,
-         8 * linesize / 2,
-         9 * linesize / 2,
-         9 * linesize / 2,
-         10 * linesize / 2,
-         10 * linesize / 2,
-         11 * linesize / 2
+    POSITION_LIST = [-2*l, -1*l, 0*l, 1*l, 2*l, 3*l, 4*l, 5*l, 6*l, 7*l, 8*l, 9*l, 10*l]
 
-    ]
+    i = all_naturals.index('C3')
+    POSITION_MAPPING_1 = {name: pos for name, pos in zip(all_naturals[i:], POSITION_LIST)}
 
-    POSITION_MAPPING = {name: pos for name, pos in zip(Notes_name[Notes_name.index('C3'):], POSITION_LIST)}
+    i = all_flats.index('Cb3')
+    POSITION_MAPPING_2 = {name: pos for name, pos in zip(all_flats[i:], POSITION_LIST)}
+
+    i = all_sharps.index('C#3')
+    POSITION_MAPPING_3 = {name: pos for name, pos in zip(all_sharps[i:], POSITION_LIST)}
+
+    i = all_double_flats.index('Cbb3')
+    POSITION_MAPPING_4 = {name: pos for name, pos in zip(all_double_flats[i:], POSITION_LIST)}
+
+    i = all_double_sharps.index('C##3')
+    POSITION_MAPPING_5 = {name: pos for name, pos in zip(all_double_sharps[i:], POSITION_LIST)}
+
+    POSITION_MAPPING = \
+        POSITION_MAPPING_1 | POSITION_MAPPING_2 | POSITION_MAPPING_3 | POSITION_MAPPING_4 | POSITION_MAPPING_5
 
     def __init__(self, color ='black'):
-        self.notes = ['C3', 'E3', 'G3']
+        self.notes = []
 
     def draw_lines(self, win):
         for i in range(5):
@@ -107,15 +97,23 @@ class Staff:
     def draw_note(self, win, note):
         start = toolbar3_size[1] - self.offset
 
-        x = toolbar3_size[0]/2 - self.linesize/2 - self.note_size/2
+        x = toolbar3_size[0]/2 - self.note_size/2
         y = start - self.POSITION_MAPPING[note] - self.note_size/2
         w = self.note_size
         h = self.note_size
 
         note_rect = x, y, w, h
+
         pygame.draw.ellipse(win, 'black', note_rect)
 
-        if note == 'C':
+        if note in all_sharps:
+            text_pos = x-10, y-5
+            write_text(win, '#', text_pos, size=17, center=False)
+
+        elif note in all_flats:
+            pass
+
+        if self.POSITION_MAPPING[note] % 10 == 0:
             line_x = x + self.note_size/2
             line_y = y + self.note_size/2
             pygame.draw.line(win, 'black', (line_x-10, line_y), (line_x+10, line_y))
@@ -157,7 +155,7 @@ def create_piano_key():
 
 def create_chord_buttons():
     size = 40
-    dist_x = size + 14
+    dist_x = size + 8
     dist_y = size + 8
 
     chord_buttons = []
@@ -252,9 +250,16 @@ def get_pressed_chord(pos, buttons):
         if button.button.collidepoint(pos):
             return button
 
-def write_text(win, data, x,y, size=25):
+def write_text(win, data, pos, size=25, color='black', center=True):
+    x,y = pos
     Font = pygame.font.SysFont('arial', size)
-    text_surf = Font.render(str(data), 1, '#A09040')
+    text_surf = Font.render(str(data), 1, color)
+    size = text_surf.get_size()
+
+    if center:
+        x = x - size[0]/2
+        y = y - size[1]/2
+
     win.blit(text_surf, (x,y))
 
 
