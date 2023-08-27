@@ -4,13 +4,21 @@ import pygame
 
 
 colors = ['#020202', '#AAAAAA', '#808080']
+
+colors2 = {
+    'light_grey': '#788080',
+    'green': '#405700',
+    'dark_green': '#1B4510',
+    'warm_yellow': '#806010',
+    'green1': '#007030',
+    'light_blue1': '#606885',
+    'light_blue2': '#607579',
+    'brown': '#604000'
+}
+
 bg_color = '#112730'
-border_color = 'black'
+bg_color = '#00222A'
 
-toolbar_col = ['#808080', '#607579', '#604001', '#604001']
-button_col = '#808080'
-
-selection_col = '#1B4510'
 
 WIDTH, HEIGHT = 700,700
 center = WIDTH//2, HEIGHT//2
@@ -77,7 +85,42 @@ else:
 slider_rect = pygame.Rect(slider_pos, slider_size)
 
 
-toggle_info = True
+# surface button will be drawn on:
+
+CHORD_SURFACE = pygame.Surface((272,192))
+CHORD_POSITION = 70, HEIGHT / 2 - CHORD_SURFACE.get_height()/2 - 20
+
+
+# chord buttons
+
+BUTTON_GRID_SIZE = 16, 16
+
+CHORD_BUTTON_SIZE = 41, 41
+
+# button text
+CHORD_BUTTON_TEXT_1 = ['5M', '5m', '5dim', '5aug']
+CHORD_BUTTON_TEXT_2 = ['6M', '6m', '64M', '64m']
+
+CHORD_BUTTON_TEXT_3 = ['7+', '65dim', '+6', '+4']
+CHORD_BUTTON_TEXT_4 = ['7M', '7m', '75dim', '7dim']
+
+CHORD_BUTTON_TEXT_5 = ['9M', '9m']
+
+
+button_text_list = \
+    [CHORD_BUTTON_TEXT_1, CHORD_BUTTON_TEXT_2, CHORD_BUTTON_TEXT_3, CHORD_BUTTON_TEXT_4, CHORD_BUTTON_TEXT_5]
+
+
+GRID_POSITION_X = [0, 3, 7, 10, 14]
+
+#GRID_POSITION_X = [0, 4, 9, 13, 18]
+
+
+
+
+toggle_info = False
 toggle_axis = False
 toggle_chosen_note = False
 toggle_font = False
+toggle_flat = False
+toggle_pos = True

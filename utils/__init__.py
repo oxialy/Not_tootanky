@@ -1,20 +1,15 @@
 from .settings import *
 
-from .drawing_functions import *
-
 from .drawing_variables import *
 
+from .sound_playing import *
+
+from.music_functions import get_allchords
+
+from.music_variables import *
+
+from.interactive_variables import *
 
 
-staff = Staff()
+pygame.font.init()
 
-white_keys, black_keys = create_piano_key()
-chord_buttons = create_chord_buttons()
-
-# unisson chord, used for single note
-# Does not appear on screen
-chord0 = Chord_button( (-10,-10, 0,0), '1')
-
-
-selected_key = None
-selected_chord_button = chord0

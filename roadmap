@@ -1,0 +1,89 @@
+
+        -ROADMAP-
+
+0) Pygame:
+    pygame settings and interaction variables
+    pygame main loop  (drawing and interaction)
+
+1) Display dev info:
+    toggle: info, screen axis, note, mouse pos
+
+
+2) Music variables:
+    chords (interval value)
+    scales (note value)
+        natural, flat, sharp
+
+    Map note: value
+
+
+3) display piano keys:
+    drawing surface
+    draw keys
+
+
+4) Class Button:
+    .draw()
+    .write() if text button
+    .ispressed()
+
+
+5) User input variable:
+    input note
+    input chord
+
+
+6) Detect mouse input:
+    get pressed key
+    get mouse input
+    store input note
+    display input note
+
+
+7) Display chord buttons:
+    drawing surface
+    draw buttons
+
+
+8) Detect mouse input:
+    get pressed chord
+    get mouse input
+    store input chord
+    display input chord
+
+
+9) Highlight pressed keys
+10) Highlight pressed chord
+
+11) Bonus features:
+    display note on music staff
+
+
+
+        -Piano Chord-
+
+settings and interaction variables:
+    screen width/height, Clock
+
+music variables:
+
+    chords
+    scales
+    sound list
+
+
+piano:
+
+    12 keys, black and white
+    store mouse input
+    highlight pressed key
+
+
+chords button:
+
+5M 5m 6M 6m 64M 64m 7+ 7M 7m ...
+
+
+User input:
+    input note
+    input chord
