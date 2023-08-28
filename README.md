@@ -1,7 +1,7 @@
 # Not_tootanky
 
-0) done
-1) done
+0. done
+1. done
 
         -ROADMAP-
 
