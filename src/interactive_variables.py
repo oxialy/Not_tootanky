@@ -15,21 +15,21 @@ pos = pos_x, pos_y = round(WIDTH/2), round(HEIGHT/2)
 #   selected chord
 
 
-# settings:
-#   BPM
-#   volume
-
-VOLUME = 0.3
-
-
 
 # dev controls:
 
-TOGGLE_INFO = False
+HIDE_ALL_INFO = False
 
-TOGGLE_MUTE = False
-TOGGLE_AXIS = False
-TOGGLE_CHOSEN_NOTE = False
-TOGGLE_FONT = False
-TOGGLE_FLAT = False
-TOGGLE_POS = True
+TOGGLES = {
+    'CONTROLS': True,
+    'INFO': False,
+    'AXIS': False,
+    'FLAT': False,
+    'POS': True,
+    'MUTE': False,
+    'RESIZE': False,
+    'CHOSEN_NOTE': False,
+}
+
+
+
