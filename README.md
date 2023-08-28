@@ -10,7 +10,7 @@
     pygame main loop  (drawing and interaction)
 
 
-1) Dev info and qol features:
+2) Dev info and qol features:
     text writing
 
     toggle info
@@ -20,7 +20,7 @@
     toggle mute
 
 
-2) Music variables:
+3) Music variables:
     chords (interval value)
     scales (note value)
         natural, flat, sharp
@@ -28,29 +28,29 @@
     Map note: value
 
 
-3) Sound files
+4) Sound files
     note sound
 
 
-4) Sound playing:
+5) Sound playing:
     play note
 
 
-5) Test all sound files
+6) Test all sound files
 
 
-6) display piano keys:
+7) display piano keys:
     drawing surface
     draw keys
 
 
-7) Class Button:
+8) Class Button:
     .draw()
     .write() if text button
     .ispressed()
 
 
-8) User input variable:
+9) User input variable:
     input note
     input chord
 
